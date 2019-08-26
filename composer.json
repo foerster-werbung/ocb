@@ -1,6 +1,6 @@
 {
   "name": "foersterwerbung/ocb",
-  "description": "Easily bootstrap a new October CMS project",
+  "description": "Easily bootstrap a new and existing October CMS project",
   "license": "MIT",
   "authors": [
     {

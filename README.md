@@ -1,13 +1,14 @@
-# OCB, the Bootstrapper for October CMS
+# OCB, the Bootstrapper and Apache docker container for October CMS 
 
 `ocb` is a command line tool and a docker container that enables you to reconstruct an October CMS installation
 from a single configuration file and run it in place.
 
-It can be used to quickly bootstrap a local development environment for a project or
-to build and update a production installation during a deployment.
+It can be used to quickly bootstrap a local development environment for a project.
 
 ## Credits
 `ocb` is a fork of [OFFLINE-GmbH/oc-bootstrapper](https://github.com/OFFLINE-GmbH/oc-bootstrapper).
+
+`oc-bootstrap`'s `october.yaml` is compatible with `ocb`. No changes required.
 
 The docker container is build on top of [aspendigital/docker-octobercms](https://github.com/aspendigital/docker-octobercms).
 
@@ -182,7 +183,7 @@ You can set
 to apply the `odb seed` command once.
  
  
- ### Scheduler and Queues
+### Scheduler and Queues
  
  To enable a scheduler for OcbtoberCMS just add `OCB_CRON=true` to your `docker-composer.yaml` file.
  
@@ -202,6 +203,60 @@ to apply the `odb seed` command once.
     }
 }
  ```
+ 
+## Files that should be tracked with git
+This is the minimal set that you need for your team:
+```
+.gitignore
+docker-compose.yaml
+october.yaml
+```
+
+If you have custom plugins or themes with migrations and storage folder:
+```
+dev
+    migrations
+    storage
+plugins
+    custom-vendor  
+        custom-plugin
+storage
+    app
+    cms
+    framework
+    logs
+    .gitignore   
+themes
+    my-theme
+.gitignore
+docker-compose.yaml
+october.yaml
+```
+with this `.gitignore`:
+```
+*
+!.gitignore
+!composer.*
+composer.phar
+!.env.*
+!october.yaml
+!Envoy.blade.php
+!.gitlab-ci.yml
+!themes
+!themes/**/*
+!plugins
+!plugins/custom-vendor
+!plugins/custom-vendor/custom-plugin
+!plugins/custom-vendor/custom-plugin/*
+!plugins/custom-vendor/custom-plugin/**/*
+!dev
+!dev/**/*
+!docker-compose.yaml
+!storage
+!storage/**/*
+```
+
+
  
 ## Configuration for the container
  
