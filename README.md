@@ -30,13 +30,8 @@ The docker container is build on top of [aspendigital/docker-octobercms](https:/
 
 ## Docker image
 
-An official Docker image that bundles `ocb`, `composer` and `Envoy` is available on [hub.docker.com](https://hub.docker.com/r/offlinegmbh/oc-bootstrapper/) as `offlinegmbh/oc-bootstrapper`.
+An official Docker image that bundles `ocb`, `composer` and `Envoy` is available on [hub.docker.com](https://hub.docker.com/r/foersterwerbung/ocb) as `foersterwerbung/ocb`.
 
-```bash
-docker run offlinegmbh/oc-bootstrapper october -v
-docker run offlinegmbh/oc-bootstrapper envoy -v
-docker run offlinegmbh/oc-bootstrapper composer -v
-```
 
 ## Usage
 
