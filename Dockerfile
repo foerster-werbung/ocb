@@ -17,6 +17,7 @@ RUN mkdir /composer \
     && composer require --prefer-dist laravel/envoy --no-interaction
 
 RUN cd /opt/ocb && dos2unix ocb ocb-entrypoint
+RUN cd /opt/ocb && chmod +x ocb && chmod +x ocb-entrypoint
 
 RUN ln -s /opt/ocb/ocb-entrypoint /usr/bin/ocb-entrypoint
 RUN ln -s /opt/ocb/ocb /usr/bin/ocb
