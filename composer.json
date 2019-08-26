@@ -1,0 +1,30 @@
+{
+  "name": "offline/oc-bootstrapper",
+  "description": "Easily bootstrap a new October CMS project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Tobias Kündig",
+      "email": "tobias.kuendig@offlinegmbh.ch"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "FoersterWerbung\\Bootstrapper\\October\\": "src/"
+    }
+  },
+  "require": {
+    "guzzlehttp/guzzle": "~6.0",
+    "cypresslab/gitelephant": "~2.1.1",
+    "symfony/console": "~2.7|~3.0|~4.0",
+    "symfony/process": "~2.7|~3.0|~4.0",
+    "symfony/filesystem": "~2.7|~3.0|~4.0",
+    "symfony/yaml": "~2.1|~3.0|~4.0"
+  },
+  "bin": [
+    "october"
+  ],
+  "require-dev": {
+    "symfony/var-dumper": "~2.7|~3.0|~4.0"
+  }
+}

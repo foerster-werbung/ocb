@@ -1,0 +1,13 @@
+deploy:
+    image: offlinegmbh/oc-bootstrapper:latest
+    only:
+        - master
+    script:
+        - eval $(ssh-agent -s)
+        - echo "$SSH_PRIVATE_KEY" > /tmp/id_rsa && chmod 400 /tmp/id_rsa && ssh-add /tmp/id_rsa && mkdir -p ~/.ssh
+        - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+        - |
+            envoy run deploy \
+                --author="$GITLAB_USER_LOGIN" \
+                --branch="$CI_COMMIT_REF_NAME" \
+                --commit="$CI_COMMIT_MESSAGE"

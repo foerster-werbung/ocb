@@ -1,0 +1,18 @@
+#!/usr/bin/env php
+<?php
+define('DS', DIRECTORY_SEPARATOR);
+
+if (file_exists(__DIR__.'/../../autoload.php')) {
+    require __DIR__.'/../../autoload.php';
+} else {
+    require __DIR__.'/vendor/autoload.php';
+}
+
+$app = new Symfony\Component\Console\Application('October CMS Bootstrapper', '0.5.4');
+$app->add(new \FoersterWerbung\Bootstrapper\October\Console\InitCommand);
+$app->add(new \FoersterWerbung\Bootstrapper\October\Console\InstallCommand);
+$app->add(new \FoersterWerbung\Bootstrapper\October\Console\UpdateCommand);
+$app->add(new \FoersterWerbung\Bootstrapper\October\Console\PushCommand);
+$app->add(new \FoersterWerbung\Bootstrapper\October\Console\SeedCommand);
+$app->run();
+

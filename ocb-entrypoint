@@ -1,0 +1,50 @@
+#!/bin/bash
+
+set -e
+
+ALREADY_INSTALLED="/root/ALREADY_INSTALLED"
+ALREADY_SEEDED="/root/ALREADY_SEEDED"
+
+if [ ! -f "october.yaml" ]; then
+
+    echo 'Initializing october.yaml in project root'
+    ocb init
+    echo 'You can also start the container again.'
+
+else
+
+    # Run ocb on startup
+    if [ "${OCB_INSTALL,,}" == "true" ] && [ ! -e $ALREADY_INSTALLED ]; then
+
+      echo 'Initializing October CMS...'
+      ocb install
+      echo 'Initializing October CMS done'
+      echo ''
+      echo 'Updating October CMS and plugins...'
+      php artisan october:update
+
+      touch $ALREADY_INSTALLED
+    fi
+
+
+    # Run Seeds
+    if [ "${OCB_SEED,,}" == "true" ] && [ ! -e $ALREADY_SEEDED ]; then
+
+      echo 'Initializing October CMS seeds...'
+      ocb seed
+      touch $ALREADY_SEEDED
+
+    fi
+
+    # Pushing crontab
+    if [ "${OCB_CRON,,}" == "true" ]; then
+        echo 'Adding crontab "* * * * * /usr/local/bin/php /var/www/html/artisan schedule:run"'
+        echo "* * * * * /usr/local/bin/php /var/www/html/artisan schedule:run > /proc/1/fd/1 2>/proc/1/fd/2" | tee -a /var/spool/cron/root
+        echo 'Starting cron service'
+        service cron start
+    fi
+
+    docker-oc-entrypoint $@
+
+fi
+

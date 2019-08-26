@@ -1,0 +1,47 @@
+app:
+    url: http://localhost
+    locale: en
+    debug: true
+
+cms:
+    theme: name (user@remote.git)
+    edgeUpdates: false
+    enableSafeMode: false
+
+database:
+    connection: mysql
+    host: localhost
+    port: 3306
+    username: root
+    password: password
+    database: myproject
+
+git:
+    deployment: false
+    bareRepo: true          # Exclude everything except themes and custom plugins in git
+    excludePlugins: false   # Even exclude plugins from your repo. Private plugins will be
+                            # checkout out again during each "install" run. Be careful!
+                            # Manual changes to these plugins will be overwritten.
+
+plugins:
+    - Vdlp.Redirect
+    - Rainlab.Pages
+    - Rainlab.Builder
+    - Indikator.Backend
+    - Inetis.Dump
+    - FoersterWerbung.SiteSearch
+    - FoersterWerbung.ResponsiveImages
+    # - Vendor.Private (user@remote.git)
+
+mail:
+    host: smtp.mailgun.org
+    name: User Name
+    address: email@example.com
+    driver: log
+
+seed:
+    database: dev/ocms.sql
+    stroage: dev/storage
+
+queue:
+    driver: database
