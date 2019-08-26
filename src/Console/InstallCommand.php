@@ -96,7 +96,7 @@ class InstallCommand extends Command
     /**
      * Set PHP version to be used in console commands
      */
-    public function setPhp(string $php = 'php')
+    public function setPhp($php = 'php')
     {
         //IDEA: simple observer for changing the php version
         $this->php = $php;

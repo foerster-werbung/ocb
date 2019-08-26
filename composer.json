@@ -1,11 +1,11 @@
 {
-  "name": "offline/oc-bootstrapper",
+  "name": "foersterwerbung/ocb",
   "description": "Easily bootstrap a new October CMS project",
   "license": "MIT",
   "authors": [
     {
-      "name": "Tobias Kündig",
-      "email": "tobias.kuendig@offlinegmbh.ch"
+      "name": "Tim Förster",
+      "email": "tim@foerster-werbung.com"
     }
   ],
   "autoload": {
@@ -22,7 +22,7 @@
     "symfony/yaml": "~2.1|~3.0|~4.0"
   },
   "bin": [
-    "october"
+    "ocb"
   ],
   "require-dev": {
     "symfony/var-dumper": "~2.7|~3.0|~4.0"

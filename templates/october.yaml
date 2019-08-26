@@ -13,8 +13,8 @@ database:
     host: localhost
     port: 3306
     username: root
-    password: password
-    database: myproject
+    password: octobercms
+    database: octobercms
 
 git:
     deployment: false
@@ -24,13 +24,9 @@ git:
                             # Manual changes to these plugins will be overwritten.
 
 plugins:
-    - Vdlp.Redirect
     - Rainlab.Pages
     - Rainlab.Builder
     - Indikator.Backend
-    - Inetis.Dump
-    - FoersterWerbung.SiteSearch
-    - FoersterWerbung.ResponsiveImages
     # - Vendor.Private (user@remote.git)
 
 mail:
@@ -40,7 +36,7 @@ mail:
     driver: log
 
 seed:
-    database: dev/ocms.sql
+    database: dev/migrations
     stroage: dev/storage
 
 queue:
