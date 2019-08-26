@@ -60,6 +60,17 @@ class UpdateCommand extends Command
     }
 
     /**
+     * Set output for all components
+     */
+    public function setOutput(OutputInterface $output)
+    {
+        $this->output = $output;
+        $this->pluginManager->setOutput($output);
+        $this->composer->setOutput($output);
+        $this->artisan->setOutput($output);
+    }
+
+    /**
      * Set PHP version to be used in console commands
      */
     public function setPhp(string $php = 'php')

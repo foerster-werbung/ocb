@@ -106,7 +106,7 @@ class SeedCommand extends Command
                 $this->seedMysql();
                 break;
             default:
-                $this->write("Unsupported database seeding {$DB_CONNECTION}", 'warn');
+                $this->write("Unsupported database seeding {$DB_CONNECTION}", 'warning');
         }
     }
 
@@ -132,7 +132,7 @@ class SeedCommand extends Command
 
         $this->write("Connecting to database server $DB_HOST:$DB_PORT with $DB_USERNAME@$DB_DATABASE");
         # MySQL with PDO_MYSQL
-        $db = new PDO("mysql:host=$DB_HOST;dbname=$DB_DATABASE;port=$DB_PORT", $DB_USERNAME, $DB_PASSWORD);
+        $db = new PDO("mysql:host=$DB_HOST;dbname=$DB_DATABASE;port=$DB_PORT;charset=utf8", $DB_USERNAME, $DB_PASSWORD);
 
 
 
@@ -170,7 +170,7 @@ class SeedCommand extends Command
     protected function seedMysqlFile(PDO $db, $file) {
 
         $this->write("Seeding file $file");
-        $query = file_get_contents($file);
+        $query = $this->file_get_contents_utf8($file);
         $stmt = $db->prepare($query);
         if ($stmt->execute())
             $this->write("File has been seeded successfully");
@@ -184,6 +184,12 @@ class SeedCommand extends Command
         return true;
     }
 
+    function file_get_contents_utf8($fn) {
+        $content = file_get_contents($fn);
+        return mb_convert_encoding($content, 'UTF-8',
+            mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true));
+    }
+
     /**
      * Seeds the storage folder
      */
@@ -193,7 +199,7 @@ class SeedCommand extends Command
         $storageFolder = $this->config->seed["storage"];
 
         if(!$storageFolder) {
-            $this->write("No storage folder given", "warn");
+            $this->write("No storage folder given", "info");
             return;
         }
         $src = $directory . DS . $storageFolder;
