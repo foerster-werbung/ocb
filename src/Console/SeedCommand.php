@@ -110,6 +110,13 @@ class SeedCommand extends Command
         }
     }
 
+    public function afterSeeding($db) {
+        $query = "SET foreign_key_checks = 1;";
+        $stmt = $db->prepare($query);
+        if ($stmt->execute()) {
+            $this->write("FK-Check enabled", "info");
+        }
+    }
     /**
      * Seeds the MySQL database, requires mysql binary
      */
@@ -134,10 +141,15 @@ class SeedCommand extends Command
         # MySQL with PDO_MYSQL
         $db = new PDO("mysql:host=$DB_HOST;dbname=$DB_DATABASE;port=$DB_PORT;charset=utf8", $DB_USERNAME, $DB_PASSWORD);
 
-
+        $query = "SET foreign_key_checks = 0;";
+        $stmt = $db->prepare($query);
+        if ($stmt->execute()) {
+            $this->write("FK-Check disabled", "info");
+        }
 
         if(is_file($seedOrigin)) {
-            return $this->seedMysqlFile($db, $seedOrigin);
+            $this->seedMysqlFile($db, $seedOrigin);
+            return $this->afterSeeding($db);
         }
 
         if(!is_dir($seedOrigin)) {
@@ -158,6 +170,8 @@ class SeedCommand extends Command
         } else {
             $this->write("Unable to read seeding directory");
         }
+
+        $this->afterSeeding($db);
 
         $this->write("Database has been seeded");
     }
