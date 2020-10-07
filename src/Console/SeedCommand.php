@@ -153,7 +153,8 @@ class SeedCommand extends Command
         }
 
         if(!is_dir($seedOrigin)) {
-            throw new \Exception("$seedOrigin is neither a file nor a directory");
+            $this->write("$seedOrigin is neither a file nor a directory, skipping seeding", "error");
+            return $this->afterSeeding($db);
         };
 
         if ($handle = opendir($seedOrigin)) {

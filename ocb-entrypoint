@@ -19,9 +19,6 @@ else
       echo 'Initializing October CMS...'
       ocb install
       echo 'Initializing October CMS done'
-      echo ''
-      echo 'Updating October CMS and plugins...'
-      php artisan october:update
 
       touch $ALREADY_INSTALLED
     fi

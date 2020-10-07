@@ -1,4 +1,4 @@
-FROM aspendigital/octobercms:develop-php7.3-apache
+FROM aspendigital/octobercms:develop-php7.4-apache
 
 RUN apt-get update && apt-get install -y curl dos2unix
 

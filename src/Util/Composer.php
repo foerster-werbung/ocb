@@ -68,9 +68,22 @@ class Composer
      */
     public function install()
     {
+
         $this->runProcess(
             $this->composer . ' install --no-scripts --no-interaction --prefer-dist',
             'Failed to run composer install',
+            3600
+        );
+    }
+
+    /**
+     * Composer create
+     */
+    public function createProject($folder)
+    {
+        $this->runProcess(
+            $this->composer . ' create-project october/october --no-scripts --no-interaction --no-install '.$folder,
+            'Failed to run composer create-project',
             3600
         );
     }

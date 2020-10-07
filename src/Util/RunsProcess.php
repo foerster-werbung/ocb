@@ -47,8 +47,8 @@ trait RunsProcess
     protected function checkProcessResult($exitCode, $message, $output)
     {
         if ($exitCode !== 0) {
-            $this->output->writeln('<error>' . $message . ': ' . $output . '</error>');
-
+            $this->output->writeln('<error>' . $message . ($output ? ': ' : '') .  '</error>');
+            $this->output->writln('-> '.$output);
             return false;
         }
 

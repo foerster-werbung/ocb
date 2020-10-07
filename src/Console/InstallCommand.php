@@ -86,7 +86,7 @@ class InstallCommand extends Command
         $this->themeManager  = new ThemeManager();
         $this->artisan       = new Artisan();
         $this->composer      = new Composer();
-        $this->ocms      = new OctoberCms();
+        $this->ocms          = new OctoberCms();
 
         $this->setPhp();
 
@@ -103,6 +103,7 @@ class InstallCommand extends Command
         $this->artisan->setPhp($php);
         $this->pluginManager->setPhp($php);
         $this->themeManager->setPhp($php);
+        $this->ocms->setPhp($php);
     }
 
     /**
@@ -159,10 +160,6 @@ class InstallCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ( ! class_exists('ZipArchive')) {
-            throw new RuntimeException('The Zip PHP extension is not installed. Please install it and try again.');
-        }
-
         $this->setOutput($output);
 
         $this->force = $input->getOption('force');
@@ -190,7 +187,6 @@ class InstallCommand extends Command
 
         $this->write('Installing composer dependencies...');
         $this->composer->install();
-        // $this->composer->addDependency('offline/oc-bootstrapper');
 
         $this->write('Setting up config files...');
         $this->writeConfig($this->force);
@@ -199,9 +195,6 @@ class InstallCommand extends Command
 
         $this->write('Migrating database...');
         $this->artisan->call('october:up');
-
-        $this->write('Updating October CMS...');
-        $this->artisan->call('october:update');
 
         $themeDeclaration = false;
         try {
