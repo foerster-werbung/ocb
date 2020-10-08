@@ -32,6 +32,8 @@ class OctoberCms extends BaseManager
     protected $installerFile;
     protected $ocmsInstallDir = '/tmp/ocms';
 
+    protected $branch = "1.1.x-dev";
+
     /**
      * Downloads and extracts October CMS.
      *
@@ -63,6 +65,7 @@ class OctoberCms extends BaseManager
             ->cleanupProject()
             ->createProject()
             ->copyProjectFiles()
+            ->setMaster()
             ->cleanupProject();
 
         return $this;
@@ -117,7 +120,7 @@ class OctoberCms extends BaseManager
         $contents = preg_replace_callback(
             '/october\/(?:rain|system|backend|cms)":\s"([^"]+)"/m',
             function ($treffer) {
-                $replacedDependency = str_replace($treffer[1], 'dev-master', $treffer[0]);
+                $replacedDependency = str_replace($treffer[1], $this->branch, $treffer[0]);
                 $this->write("--> $replacedDependency");
                 return $replacedDependency;
             },

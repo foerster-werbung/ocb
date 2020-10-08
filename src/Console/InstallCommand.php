@@ -77,6 +77,7 @@ class InstallCommand extends Command
      */
     protected $php;
 
+
     /**
      * @inheritdoc
      */
@@ -164,7 +165,6 @@ class InstallCommand extends Command
 
         $this->force = $input->getOption('force');
 
-
         $this->makeConfig();
 
         if ( ! empty($php = $input->getOption('php'))) {
@@ -189,6 +189,9 @@ class InstallCommand extends Command
 
         $this->write('Setting up config files...');
         $this->writeConfig($this->force);
+
+        $this->write('Setting disableCoreUpdates to true...');
+        $this->writeCmsDevConfig($this->force);
 
         $this->prepareDatabase();
 
@@ -334,8 +337,7 @@ class InstallCommand extends Command
 
         if ($this->firstRun) {
             $setup->env(false, true);
-
-            return;
+            return ;
         }
 
         if ($this->fileExists('.env') && $force === false) {
@@ -407,5 +409,11 @@ class InstallCommand extends Command
                 touch($path);
             }
         }
+    }
+
+    private function writeCmsDevConfig()
+    {
+        $cms = $this->getTemplate('dev.cms.php');
+        $this->copy($cms, 'config/dev/cms.php');
     }
 }
