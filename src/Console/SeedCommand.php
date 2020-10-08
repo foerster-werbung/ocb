@@ -77,15 +77,15 @@ class SeedCommand extends Command
         $this->setOutput($output);
 
         if ($this->config->seed && $this->config->seed['database']) {
-            $this->write('Seeding DB...');
+            $this->write('-> Seeding DB...');
             $this->seedDatabase();
         }
 
 
-        $this->write('Seeding storage');
+        $this->write('-> Seeding storage');
         $this->seedStorage();
 
-        $this->write('Application seeded', 'comment');
+        $this->write('-> Application seeded', 'comment');
 
         return true;
     }
@@ -106,16 +106,18 @@ class SeedCommand extends Command
                 $this->seedMysql();
                 break;
             default:
-                $this->write("Unsupported database seeding {$DB_CONNECTION}", 'warning');
+                $this->write("-> Unsupported database seeding {$DB_CONNECTION}", 'warning');
         }
     }
 
     public function afterSeeding($db) {
-        $query = "SET foreign_key_checks = 1;";
+        $query = "-> SET foreign_key_checks = 1;";
         $stmt = $db->prepare($query);
         if ($stmt->execute()) {
-            $this->write("FK-Check enabled", "info");
+            $this->write("--> FK-Check enabled", "info");
         }
+
+        return $this;
     }
     /**
      * Seeds the MySQL database, requires mysql binary
@@ -137,14 +139,14 @@ class SeedCommand extends Command
             $seedOrigin = $directory . DS . $seedOrigin;
         }
 
-        $this->write("Connecting to database server $DB_HOST:$DB_PORT with $DB_USERNAME@$DB_DATABASE");
+        $this->write("-> Connecting to database server $DB_HOST:$DB_PORT with $DB_USERNAME@$DB_DATABASE");
         # MySQL with PDO_MYSQL
         $db = new PDO("mysql:host=$DB_HOST;dbname=$DB_DATABASE;port=$DB_PORT;charset=utf8", $DB_USERNAME, $DB_PASSWORD);
 
-        $query = "SET foreign_key_checks = 0;";
+        $query = "-> SET foreign_key_checks = 0;";
         $stmt = $db->prepare($query);
         if ($stmt->execute()) {
-            $this->write("FK-Check disabled", "info");
+            $this->write("--> FK-Check disabled", "info");
         }
 
         if(is_file($seedOrigin)) {
@@ -153,7 +155,7 @@ class SeedCommand extends Command
         }
 
         if(!is_dir($seedOrigin)) {
-            $this->write("$seedOrigin is neither a file nor a directory, skipping seeding", "error");
+            $this->write("-> $seedOrigin is neither a file nor a directory, skipping seeding", "error");
             return $this->afterSeeding($db);
         };
 
@@ -169,12 +171,14 @@ class SeedCommand extends Command
 
             closedir($handle);
         } else {
-            $this->write("Unable to read seeding directory");
+            $this->write("-> Unable to read seeding directory");
         }
 
         $this->afterSeeding($db);
 
-        $this->write("Database has been seeded");
+        $this->write("-> Database has been seeded");
+
+        return $this;
     }
 
     protected function isSqlFile(string $file) {
@@ -184,15 +188,15 @@ class SeedCommand extends Command
 
     protected function seedMysqlFile(PDO $db, $file) {
 
-        $this->write("Seeding file $file");
+        $this->write("-> Seeding file $file");
         $query = $this->file_get_contents_utf8($file);
         $stmt = $db->prepare($query);
         if ($stmt->execute())
-            $this->write("File has been seeded successfully");
+            $this->write("--> File has been seeded successfully");
         else {
 
-            $this->write("Error {$db->errorCode()}, $file could not be seeded:", "error");
-            $this->write($db->errorInfo());
+            $this->write("--> Error {$db->errorCode()}, $file could not be seeded:", "error");
+            $this->write("---> {$db->errorInfo()}");
         }
 
 
@@ -214,7 +218,7 @@ class SeedCommand extends Command
         $storageFolder = $this->config->seed["storage"];
 
         if(!$storageFolder) {
-            $this->write("No storage folder given", "info");
+            $this->write("--> No storage folder given", "comment");
             return;
         }
         $src = $directory . DS . $storageFolder;
@@ -222,9 +226,13 @@ class SeedCommand extends Command
             $src = $directory . DS . str_replace("/", DS, $storageFolder);
         }
 
+        if (!is_dir($src)) {
+            $this->write("--> Can not find storage folder '".$storageFolder. "', skipping storage seeding.", "comment");
+            return;
+        }
         $dst = $directory . DS . 'storage';
 
-        $this->write("Copying {$src} to {$dst}");
+        $this->write("--> Copying {$src} -> {$dst}");
         $this->recursive_copy($src, $dst);
     }
 

@@ -164,7 +164,6 @@ class InstallCommand extends Command
 
         $this->force = $input->getOption('force');
 
-        $this->firstRun = ! $this->dirExists($this->path('bootstrap')) || $this->force;
 
         $this->makeConfig();
 
@@ -174,14 +173,14 @@ class InstallCommand extends Command
 
         $this->gitignore = new Gitignore($this->getGitignore());
 
-        $this->write('Downloading latest October CMS...');
         try {
             $this->ocms->download($this->force);
+            $this->firstRun = true;
         } catch (\LogicException $e) {
+            $this->firstRun = false;
             $this->write($e->getMessage(), 'comment');
         } catch (Throwable $e) {
             $this->write($e->getMessage(), 'error');
-
             return false;
         }
 
