@@ -156,7 +156,7 @@ class UpdateCommand extends Command
 
         $this->write('<info>Migrating all unmigrated versions</info>');
 
-        $this->artisan->call('october:up');
+        $this->artisan->call('october:migrate');
 
         $this->write('<info>Running composer update</info>');
         $this->composer->updateLock();

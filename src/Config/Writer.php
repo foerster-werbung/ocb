@@ -231,6 +231,22 @@ class Writer
         return $this;
     }
 
+
+    /**
+     * Write multiple values to a yaml file.
+     *
+     * @param       $file
+     * @param       $values
+     *
+     * @return $this
+     */
+    public function writeYaml($file, $values)
+    {
+        $contents = yaml_parse_file($file);
+        yaml_emit_file($file, array_merge($contents, $values), YAML_UTF8_ENCODING, );
+        return $this;
+    }
+
     /**
      * Checks if an .env file is present.
      *

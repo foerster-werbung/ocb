@@ -65,7 +65,7 @@ class OctoberCms extends BaseManager
             ->cleanupProject()
             ->createProject()
             ->copyProjectFiles()
-            ->setMaster()
+            //->setMaster()
             ->cleanupProject();
 
         return $this;

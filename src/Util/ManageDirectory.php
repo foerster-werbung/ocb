@@ -4,6 +4,7 @@ namespace FoersterWerbung\Bootstrapper\October\Util;
 
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Process\Process;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Trait with directory helpers
@@ -22,6 +23,38 @@ trait ManageDirectory
 
         if ( ! $this->fileExists($targetFile)) {
             throw new RuntimeException('File ' . $targetFile . ' could not be created');
+        }
+
+        return true;
+    }
+
+    /**
+     * Copy recursive
+     * @param $sourceDir
+     * @param $targetDir
+     * @return bool
+     */
+    public function rcopy($sourceDir, $targetDir)
+    {
+        $fileSystem = new FileSystem();
+        $this->mkdir($targetDir);
+
+        $directoryIterator = new \RecursiveDirectoryIterator($sourceDir, \RecursiveDirectoryIterator::SKIP_DOTS);
+        $iterator = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::SELF_FIRST);
+        foreach ($iterator as $item)
+        {
+            if ($this->fileExists($targetDir . DIRECTORY_SEPARATOR . $iterator->getSubPathName())) {
+                continue;
+            }
+
+            if ($item->isDir())
+            {
+                $fileSystem->mkdir($targetDir . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+            }
+            else
+            {
+                $fileSystem->copy($item, $targetDir . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+            }
         }
 
         return true;

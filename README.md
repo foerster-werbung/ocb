@@ -1,16 +1,15 @@
-# OCB, the Bootstrapper and Apache docker container for October CMS 
+# OCB, the Bootstrapper and Docker container for October CMS 
+
+OCB, the fastest way to get ready for your next octobercms v2 project development.
 
 `ocb` is a command line tool and a docker container that enables you to reconstruct an October CMS installation
 from a single configuration file and run it in place.
 
 It can be used to quickly bootstrap a local development environment for a project.
 
-## Credits
-`ocb` is a fork of [OFFLINE-GmbH/oc-bootstrapper](https://github.com/OFFLINE-GmbH/oc-bootstrapper).
+Since version 2.0, it uses php8 with php-fpm and nginx. 
 
-`oc-bootstrap`'s `october.yaml` is compatible with `ocb`. No changes required.
-
-The docker container is build on top of [aspendigital/docker-octobercms](https://github.com/aspendigital/docker-octobercms).
+If you are looking for a wintercms Docker container, use [foersterwerbung/wcb](https://github.com/foerster-werbung/wcb) instead.
 
 ## Features
 
@@ -25,7 +24,17 @@ The docker container is build on top of [aspendigital/docker-octobercms](https:/
 ### Container
 * Runs ocb in docker container 
 * Automatic install/update/seed the project during startup of the container
-* Makes sure that everything inside of OctoberCMS is in a correct state, and if not it reports you back.
+* Makes sure that everything inside of OctoberCMS is in a correct state, and if not it reports you back
+* Enable/Disable XDebug with a single variable
+* Can be easily shared in your team
+* Uses php-fpm
+
+
+## Versions
+| OCB Version |  Supported Octobercms version | php Version | Webserver | Module   | Depending on |
+| ----------- | ----------------------------- | ----------- | --------- | -------- | ------------ |
+| 1.x         | 1.0, 1.1                      | 7.4         | Apache    | mod_php  | [aspendigital/docker-octobercms](https://github.com/aspendigital/docker-octobercms) |
+| 2.x         | 2.0                           | 8.0         | Nginx     | php-fpm  |  [dwchiang/nginx-php-fpm](https://github.com/dwchiang/nginx-php-fpm/tree/master/alpine3.12) |
 
 
 ## Docker image
@@ -39,7 +48,7 @@ An official Docker image that bundles `ocb`, `composer` and `Envoy` is available
 
 #### 1. Create a `docker-compose.yaml` file in your project root:
 ```
-version: '2.2'
+version: '3'
 services:
   web:
     image: foersterwerbung/ocb:latest
@@ -64,7 +73,7 @@ services:
 
 In your project directory you'll find an `october.yaml` file. Edit its contents.
 
-Simply add a theme name and your ready to go.
+Copy your license key under `october.licenseKey` and  add a theme name.
 
 Start the `web` container again. Check the output of the container to see whats happening.
 
@@ -72,8 +81,41 @@ If `OCB_INSTALL=true` is set, it will download a fresh copy of October Cms.
 It will also install the defined plugins and themes that you have 
 configured in your `october.yaml`.
 
-After the init phase, an apache server runs in the foreground.
+After the init phase, a nginx server runs in the background with php-fpm.
 
+## Migration
+### OCB 1 -> 2
+When you want to move from ocb 1.x to 2, add 
+```yaml
+october:
+    licenseKey: KEY
+```
+to your october.yaml.
+After that, upgrade your `docker-compose.yaml` ocb version to version `2.x` or recreate the `:latest` ocb container.
+
+### Octobercms 1 -> 2
+Before you start, backup your whole project, including your database!
+
+If you want to migrate to octobercms v2, you have to upgrade to OCB 2 (see above).
+Fill out the license key and delete the vendor, plugin, config, modules directory.
+Trash your database.
+After that, simply start the container and copy back your plugins. 
+Restart the container, and you should be ready to go.
+
+### From oc-bootstrap
+1. Add the example `docker-compose.yaml` file in Quickstart 1. 
+1. Make sure that you have `OCB_INSTALL=true` in your docker web container environment set   
+1. Add the october licenseKey in your october.yaml file (see Migration OCB 1 -> 2)
+1. Start the container.
+
+### From aspendigital/docker-octobercms
+1. Change your `docker-compose.yaml` file like in the Quickstart 1.
+2. You have cron enabled, use `OCB_CRON=true` instead.
+3. Use `OCB_INSTALL=false` if you don't want octobercms automatically to be installed.
+4. Start the container, you should find an `october.yaml` file in your working directory.
+5. If you `OCB_INSTALL=false`, continue; Otherwise you should configure the plugin section, theme name and octobercms license key.
+6. Cut all `DB_*` from the web environment and paste it to the `october.yaml` file. 
+6. Restart the container.
 
 ## Configuration
 
@@ -149,12 +191,6 @@ to apply the `odb seed` command once during the init phase.
  
  
 ### Variables for the container
- 
-Following environment variables can be used from [docker-octobercms](https://github.com/aspendigital/docker-octobercms#docker-entrypoint).
-
-Do not use the `October CMS app environment config` from [docker-octobercms](https://github.com/aspendigital/docker-octobercms#october-cms-app-environment-config)
-since the project is init and handled by ocb.
-
 #### OCB Variables
 | Variable | Default | Action |
 | -------- | ------- | ------ |
@@ -166,12 +202,7 @@ since the project is init and handled by ocb.
 #### Docker October CMS Variables
 | Variable | Default | Action |
 | -------- | ------- | ------ |
-| ENABLE_CRON | false | use `OCB_CRON` instead |
-| FWD_REMOTE_IP | false | `true` enables remote IP forwarding from proxy (Apache) |
-| GIT_CHECKOUT |  | Checkout branch, tag, commit within the container. Runs `git checkout $GIT_CHECKOUT` |
-| GIT_MERGE_PR |  | Pass GitHub pull request number to merge PR within the container for testing |
-| INIT_OCTOBER | false | `true` runs october up on container start |
-| INIT_PLUGINS | false | `true` runs composer install in plugins folders where no 'vendor' folder exists. `force` runs composer install regardless. Helpful when using git submodules for plugins. |
+| FWD_REMOTE_IP | false | `true` enables remote IP forwarding from proxy (NGINX) |
 | PHP_DISPLAY_ERRORS | off | Override value for `display_errors` in docker-oc-php.ini |
 | PHP_MEMORY_LIMIT | 128M | Override value for `memory_limit` in docker-oc-php.ini |
 | PHP_POST_MAX_SIZE | 32M | Override value for `post_max_size` in docker-oc-php.ini |
@@ -259,7 +290,15 @@ composer.phar
 ```
 
 
- 
+
+## Credits
+`ocb` is a fork of [OFFLINE-GmbH/oc-bootstrapper](https://github.com/OFFLINE-GmbH/oc-bootstrapper).
+
+`oc-bootstrap`'s `october.yaml` is compatible with `ocb`. No changes required.
+
+The v1 docker container is build on top of [aspendigital/docker-octobercms](https://github.com/aspendigital/docker-octobercms). The PHP options are still the same for version 2.
+
+The v2 docker container is build on top of [dwchiang/nginx-php-fpm](https://github.com/dwchiang/nginx-php-fpm/tree/master/alpine3.12) with alpline.
 
 ## TODO
 

@@ -1,3 +1,6 @@
+october:
+    licenseKey: KEY
+
 app:
     url: http://localhost
     locale: en
@@ -7,6 +10,7 @@ cms:
     theme: name (user@remote.git)
     edgeUpdates: false
     enableSafeMode: false
+
 
 database:
     connection: mysql

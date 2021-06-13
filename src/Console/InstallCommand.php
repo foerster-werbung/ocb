@@ -190,13 +190,18 @@ class InstallCommand extends Command
         $this->write('Setting up config files...');
         $this->writeConfig($this->force);
 
-        $this->write('Setting disableCoreUpdates to true...');
-        $this->writeCmsDevConfig($this->force);
+        // $this->write('Setting disableCoreUpdates to true...');
+        // $this->writeCmsDevConfig($this->force);
 
         $this->prepareDatabase();
 
+        if ($this->firstRun || $this->force) {
+            $this->write('Build Octobercms...');
+            $this->artisan->call('october:build');
+        }
+
         $this->write('Migrating database...');
-        $this->artisan->call('october:up');
+        $this->artisan->call('october:migrate');
 
         $themeDeclaration = false;
         try {
@@ -213,14 +218,7 @@ class InstallCommand extends Command
                 $this->write($e->getMessage(), 'comment');
             } catch (Throwable $e) {
                 $this->write('Failed to install theme: ' . $e->getMessage(), 'error');
-
-                return false;
             }
-        }
-
-        if (array_key_exists('project', $this->config->cms)) {
-            $this->write('Setting Project ID...');
-            $this->artisan->call('october:util set project --projectId=' . $this->config->cms['project']);
         }
 
         $pluginsDeclarations = [];
@@ -262,6 +260,9 @@ class InstallCommand extends Command
         if ($this->firstRun) {
             $this->write('Removing demo data...');
             $this->artisan->call('october:fresh');
+
+            $this->write('Migrating database (after updates)...');
+            $this->artisan->call('october:migrate');
 
             $this->write('Creating README...');
             $this->copyReadme();
@@ -322,7 +323,7 @@ class InstallCommand extends Command
         }
 
         $this->write('Migrating plugin tables...');
-        $this->artisan->call('october:up');
+        $this->artisan->call('october:migrate');
     }
 
     /**
@@ -332,11 +333,12 @@ class InstallCommand extends Command
      */
     protected function writeConfig($force = false)
     {
-        $setup = new Setup($this->config, $this->output, $this->php);
+        $setup = new Setup($this->config, $this->output, $this->php, $this->artisan);
         $setup->config();
 
         if ($this->firstRun) {
             $setup->env(false, true);
+            $this->licenseKey();
             return ;
         }
 
@@ -345,6 +347,11 @@ class InstallCommand extends Command
         }
 
         $setup->env();
+        $this->licenseKey();
+    }
+
+    protected function licenseKey() {
+        $this->artisan->call('project:set ' . $this->config->october['licenseKey']);
     }
 
     /**

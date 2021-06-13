@@ -2,8 +2,11 @@
 
 namespace FoersterWerbung\Bootstrapper\October\Manager;
 
+use FoersterWerbung\Bootstrapper\October\Config\Writer;
 use FoersterWerbung\Bootstrapper\October\Exceptions\ThemeExistsException;
 use FoersterWerbung\Bootstrapper\October\Util\Git;
+use FoersterWerbung\Bootstrapper\October\Util\ManageDirectory;
+use FoersterWerbung\Bootstrapper\October\Util\UsesTemplate;
 use RuntimeException;
 
 /**
@@ -11,6 +14,10 @@ use RuntimeException;
  */
 class ThemeManager extends BaseManager
 {
+
+    use ManageDirectory;
+    use UsesTemplate;
+
     /**
      * Parse the theme's name and remote path out of the
      * given theme declaration.
@@ -82,7 +89,15 @@ class ThemeManager extends BaseManager
         }
 
         if ($remote === false) {
-            return $this->installViaArtisan($theme);
+            try {
+                return $this->installViaArtisan($theme);
+            } catch (RuntimeException $e) {
+                $themeTemplate = $this->getTemplate('theme');
+                $this->rcopy($themeTemplate, $themeDir);
+                $this->createThemeYamlFile($themeDir, $themeDeclaration);
+                $this->artisan->call('theme:use '.$themeDeclaration);
+                return true;
+            }
         }
 
         $repo = Git::repo($themeDir);
@@ -95,6 +110,17 @@ class ThemeManager extends BaseManager
         $this->removeGitRepo($themeDir);
 
         return true;
+    }
+
+    protected function createThemeYamlFile($themedir, $themecode) {
+
+        $lines = [
+            'code' => $themecode
+        ];
+
+        $writer = new Writer();
+        $writer->writeYaml($themedir . DS . 'theme.yaml', $lines);
+
     }
 
     /**
