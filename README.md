@@ -34,7 +34,7 @@ If you are looking for a wintercms Docker container, use [foersterwerbung/wcb](h
 | OCB Version |  Supported Octobercms version | php Version | Webserver | Module   | Depending on |
 | ----------- | ----------------------------- | ----------- | --------- | -------- | ------------ |
 | 1.x         | 1.0, 1.1                      | 7.4         | Apache    | mod_php  | [aspendigital/docker-octobercms](https://github.com/aspendigital/docker-octobercms) |
-| 2.x         | 2.0                           | 8.0         | Nginx     | php-fpm  |  [dwchiang/nginx-php-fpm](https://github.com/dwchiang/nginx-php-fpm/tree/master/alpine3.12) |
+| 2.x-8.0     | 2.0                           | 8.0         | Nginx     | php-fpm  |  [dwchiang/nginx-php-fpm](https://github.com/dwchiang/nginx-php-fpm/tree/master/alpine3.12) |
 
 
 ## Docker image
