@@ -97,35 +97,6 @@ if [[ "$1" == apache2* ]] && [ "${FWD_REMOTE_IP,,}" == "true" ]; then
   a2enconf docker-oc-apache -q
 fi
 
-# Start a cron process within the container
-if [ "${ENABLE_CRON,,}" == "true" ]; then
-  php artisan schedule:run # required to prime db connection
-  cron
-  echo 'Cron enabled.'
-elif [ "$1" == cron ]; then
-  php artisan schedule:run
-fi
-
-# Initialize vendor plugins where vendor folder isn't detected
-if [ "${INIT_PLUGINS,,}" == "true" ] || [ "${INIT_PLUGINS,,}" == "force" ]; then
-  echo 'Initializing plugin vendor folders...'
-  for i in $(echo plugins/*/*); do
-    if [ -f "$i/composer.json" ]; then
-      if [ "${INIT_PLUGINS,,}" == "force" ] || [ ! -d "$i/vendor" ]; then
-        echo " - $i"
-        composer --working-dir="$i" --no-interaction --quiet install
-        chown -R www-data:www-data $i
-      fi
-    fi
-  done
-fi
-
-# Run october up on container start
-if [ "${INIT_OCTOBER,,}" == "true" ]; then
-  echo 'Initializing October CMS...'
-  php artisan october:up
-fi
-
 # Runs all October CMS unit tests. Pass test filename to run a specific test.
 if [ ! -z "$UNIT_TEST" ]; then
   echo -e "October CMS Unit Test..."

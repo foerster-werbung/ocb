@@ -78,7 +78,6 @@ RUN ln -s /opt/ocb/ocb-entrypoint /usr/bin/ocb-entrypoint
 RUN ln -s /opt/ocb/docker-oc-entrypoint /usr/bin/docker-oc-entrypoint
 RUN ln -s /composer/vendor/bin/envoy /usr/bin/envoy
 
-ENTRYPOINT ["docker-oc-entrypoint"]
 ENTRYPOINT ["ocb-entrypoint"]
 
 CMD ["/docker-entrypoint.sh"]
