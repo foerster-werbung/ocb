@@ -1,5 +1,5 @@
 october:
-    licenseKey: KEY
+    licenseKey: YOUR-LICENSE-KEY
 
 app:
     url: http://localhost
@@ -10,7 +10,6 @@ cms:
     theme: name (user@remote.git)
     edgeUpdates: false
     enableSafeMode: false
-
 
 database:
     connection: mysql
@@ -34,10 +33,15 @@ plugins:
     # - Vendor.Private (user@remote.git)
 
 mail:
+    # "smtp", "sendmail", "mailgun", "mandrill", "ses", "postmark", "sparkpost", "log", "array"
+    driver: log
     host: smtp.mailgun.org
     name: User Name
     address: email@example.com
-    driver: log
+    username: username
+    password: password
+    port: 587
+    encryption: tls
 
 seed:
     database: dev/migrations
