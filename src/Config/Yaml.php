@@ -2,15 +2,11 @@
 
 namespace FoersterWerbung\Bootstrapper\October\Config;
 
-
-use Symfony\Component\Yaml\Exception\ParseException;
-use Symfony\Component\Yaml\Parser;
-
 /**
  * Class Yaml
  * @package FoersterWerbung\Bootstrapper\October\Config
  */
-class Yaml implements Config
+class Yaml implements Config, \ArrayAccess
 {
     /**
      * @var mixed
@@ -21,19 +17,14 @@ class Yaml implements Config
      * Yaml constructor.
      *
      * @param             $file
-     * @param Parser|null $parser
      *
      * @throws \RuntimeException
      */
-    public function __construct($file, Parser $parser = null)
+    public function __construct($file)
     {
-        if ($parser === null) {
-            $parser = new Parser();
-        }
-
         try {
-            $this->config = $parser->parse(file_get_contents($file));
-        } catch (ParseException $e) {
+            $this->config = yaml_parse_file($file);
+        } catch (\Exception $e) {
             throw new \RuntimeException('Unable to parse the YAML string: %s', $e->getMessage());
         }
     }
@@ -47,5 +38,26 @@ class Yaml implements Config
     public function __get($name)
     {
         return isset($this->config[$name]) ? $this->config[$name] : null;
+    }
+
+    public function offsetExists($offset)
+    {
+        return isset($this->config[$offset]);
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->config[$offset];
+
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        // TODO: Implement offsetSet() method.
+    }
+
+    public function offsetUnset($offset)
+    {
+        // TODO: Implement offsetUnset() method.
     }
 }

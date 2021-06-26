@@ -21,7 +21,8 @@ trait ConfigMaker
     {
         $configFile = $this->pwd() . 'october.yaml';
         if ( ! file_exists($configFile)) {
-            throw new RuntimeException("<comment>october.yaml not found. Run october init first.</comment>", 1);
+            $this->config = [];
+            return ;
         }
 
         $this->config = new Yaml($configFile);

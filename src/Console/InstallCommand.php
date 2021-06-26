@@ -77,7 +77,6 @@ class InstallCommand extends Command
      */
     protected $php;
 
-
     /**
      * @inheritdoc
      */
@@ -173,44 +172,41 @@ class InstallCommand extends Command
 
         $this->gitignore = new Gitignore($this->getGitignore());
 
-        try {
-            $this->ocms->download($this->force);
-            $this->firstRun = true;
-        } catch (\LogicException $e) {
-            $this->firstRun = false;
-            $this->write($e->getMessage(), 'comment');
-        } catch (Throwable $e) {
-            $this->write($e->getMessage(), 'error');
-            return false;
-        }
+        $status = $this->ocms->checkInstallation();
 
-        $this->write('Installing composer dependencies...');
-        $this->composer->install();
+        if ($status < 2) {
+            $this->ocms->clearProject()
+                ->download();
 
-        $this->write('Setting up config files...');
-        $this->writeConfig($this->force);
+            $this->write('Installing octobercms installer...');
+            $this->composer->install();
 
-        // $this->write('Setting disableCoreUpdates to true...');
-        // $this->writeCmsDevConfig($this->force);
+            $this->write('Setting up config files...');
+            $this->writeConfig($this->force);
 
-        $this->prepareDatabase();
+            $this->prepareDatabase();
 
-        if ($this->firstRun || $this->force) {
             $this->write('Build Octobercms...');
             $this->artisan->call('october:build');
+
+            $this->firstRun = true;
         }
+
+        if ($status === 2) {
+            $this->ocms->download();
+
+            $this->write('Installing octobercms installer...');
+            $this->composer->install();
+        }
+
+        $this->write('Installing octobercms...');
+        $this->composer->install();
 
         $this->write('Migrating database...');
         $this->artisan->call('october:migrate');
 
-        $themeDeclaration = false;
-        try {
-            $themeDeclaration = $this->config->cms['theme'];
-        } catch (RuntimeException $e) {
-            $this->write('No theme to install', 'comment');
-        }
-
-        if ($themeDeclaration) {
+        if (isset($this->config['cms']['theme'])) {
+            $themeDeclaration = $this->config['cms']['theme'];
             $this->write('Installing Theme...');
             try {
                 $this->themeManager->install($themeDeclaration);
@@ -219,28 +215,20 @@ class InstallCommand extends Command
             } catch (Throwable $e) {
                 $this->write('Failed to install theme: ' . $e->getMessage(), 'error');
             }
+        }  {
+            $this->write('No theme to install', 'comment');
         }
 
-        $pluginsDeclarations = [];
-        try {
-            $pluginsDeclarations = $this->config->plugins;
-        } catch (RuntimeException $e) {
+        if (isset($this->config['plugins'])) {
+            $pluginsDeclarations = $this->config['plugins'];
+            $this->write('Installing plugins of october.yaml...');
+            $this->installPlugins($pluginsDeclarations);
+        } else {
             $this->write('No plugins to install');
         }
 
-        if ($pluginsDeclarations) {
-            $this->write('Installing plugins of october.yaml...');
-            $this->installPlugins($pluginsDeclarations);
-        }
-
-        $deployment = false;
-        try {
-            $deployment = $this->config->git['deployment'];
-        } catch (RuntimeException $e) {
-            $this->write('No deployments to install');
-        }
-
-        if ($deployment) {
+        if (isset($this->config['git']['plugins'])) {
+            $deployment = $this->config['git']['plugins'];
             $this->write("Setting up ${deployment} deployment.");
             try {
                 $deploymentObj = DeploymentFactory::createDeployment($deployment);
@@ -252,6 +240,8 @@ class InstallCommand extends Command
 
                 return false;
             }
+        } else {
+            $this->write('No deployments to install');
         }
 
         $this->write('Creating .gitignore...');

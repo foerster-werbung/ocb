@@ -231,7 +231,6 @@ class Writer
         return $this;
     }
 
-
     /**
      * Write multiple values to a yaml file.
      *

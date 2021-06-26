@@ -5,7 +5,7 @@ set -e
 ALREADY_INSTALLED="/root/ALREADY_INSTALLED"
 ALREADY_SEEDED="/root/ALREADY_SEEDED"
 
-if [ ! -f "october.yaml" ]; then
+if [ ! -f "october.yaml" ] && [ ! "${OCB_CHECK,,}" == "false" ]; then
 
     echo 'Initializing october.yaml in project root'
     ocb init

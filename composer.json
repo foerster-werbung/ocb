@@ -19,8 +19,8 @@
     "symfony/console": "~2.7|~3.0|~4.0",
     "symfony/process": "~2.7|~3.0|~4.0",
     "symfony/filesystem": "~2.7|~3.0|~4.0",
-    "symfony/yaml": "~2.1|~3.0|~4.0",
-    "ext-yaml": "*"
+    "ext-yaml": "*",
+    "ext-json": "*"
   },
   "bin": [
     "ocb"

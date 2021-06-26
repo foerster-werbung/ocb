@@ -54,7 +54,40 @@ An official Docker image that bundles `ocb`, `composer` and `Envoy` is available
 
 ### Quickstart
 
-#### 1. Create a `docker-compose.yaml` file in your project root:
+#### Without OCB
+This is useful for existing installations. You need to provide a valid `auth.json` and `composer.json` file.
+You also should have all folders in place (bootstrap, config, modules...).
+
+Create the following `docker-compose.json` file in your project root directory:
+```yaml
+version: '3'
+services:
+  web:
+    image: foersterwerbung/ocb:latest
+    ports:
+      - 80:80
+    environment:
+      - OCB_CHECK=false
+      - OCB_INSTALL=true
+    depends_on:
+      - mysql
+    volumes:
+      - "./:/var/www/html"
+
+  mysql:
+    image: mysql:5.7
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=octobercms
+      - MYSQL_DATABASE=octobercms
+```
+
+Start the mysql and web container, the container will execute `composer install` and migrate your project.
+When the web service is up, you can simply access your project.
+Make sure to change/activate your theme in the backend.
+#### With OCB
+##### 1. Create a `docker-compose.yaml` file in your project root:
 ```yaml
 version: '3'
 services:
@@ -78,7 +111,7 @@ services:
       - MYSQL_DATABASE=octobercms
 ```
 
-#### 2. Start the web container.
+##### 2. Start the web container.
 
 In your project directory you'll find an `october.yaml` file. Edit its contents.
 
@@ -118,13 +151,12 @@ Restart the container, and you should be ready to go.
 1. Start the container.
 
 ### From aspendigital/docker-octobercms
+If you only want to use this as docker service, you need to provide a valid `auth.json` and `composer.json` file. 
+
 1. Change your `docker-compose.yaml` file like in the Quickstart 1.
-2. You have cron enabled, use `OCB_CRON=true` instead.
-3. Use `OCB_INSTALL=false` if you don't want octobercms automatically to be installed.
-4. Start the container, you should find an `october.yaml` file in your working directory.
-5. If you `OCB_INSTALL=false`, continue; Otherwise you should configure the plugin section, theme name and octobercms license key.
-6. Cut all `DB_*` from the web environment and paste it to the `october.yaml` file. 
-6. Restart the container.
+2. If you like to have cron enabled, use `OCB_CRON=true` instead.
+3. Use `OCB_CHECK=false` to disable `october.yaml` file check.
+4. Start the container.
 
 ## Configuration
 
@@ -203,6 +235,7 @@ to apply the `odb seed` command once during the init phase.
 #### OCB Variables
 | Variable | Default | Action |
 | -------- | ------- | ------ |
+| OCB_CHECK | true | `false` doesn't check for an `october.yaml` file. |
 | OCB_INSTALL | false | `true` installs octobercms and dependencies during the first startup. |
 | OCB_SEED | false | `true` executes `ocb seed` during the startup once. |
 | OCB_CRON | false | `true` starts a cron process within the container which enables the scheduler for October CMS |
