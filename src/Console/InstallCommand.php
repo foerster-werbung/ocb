@@ -186,21 +186,19 @@ class InstallCommand extends Command
 
             $this->prepareDatabase();
 
-            $this->write('Build Octobercms...');
-            $this->artisan->call('october:build');
+            $this->write('Install Octobercms...');
+            $this->artisan->octoberBuild();
 
             $this->firstRun = true;
-        }
-
-        if ($status === 2) {
+        } elseif  ($status === 2) {
             $this->ocms->download();
 
             $this->write('Installing octobercms installer...');
             $this->composer->install();
+        } else {
+            $this->write('Installing octobercms...');
+            $this->composer->install();
         }
-
-        $this->write('Installing octobercms...');
-        $this->composer->install();
 
         $this->write('Migrating database...');
         $this->artisan->call('october:migrate');
@@ -267,7 +265,7 @@ class InstallCommand extends Command
 
         $this->write('Application ready! Build something amazing.', 'comment');
 
-        return true;
+        return 0;
     }
 
     /**
@@ -341,7 +339,7 @@ class InstallCommand extends Command
     }
 
     protected function licenseKey() {
-        $this->artisan->call('project:set ' . $this->config->october['licenseKey']);
+        $this->artisan->call('project:set', [$this->config->october['licenseKey']]);
     }
 
     /**

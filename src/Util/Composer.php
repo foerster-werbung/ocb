@@ -70,7 +70,7 @@ class Composer
     {
 
         $this->runProcess(
-            $this->composer . ' install --no-scripts --no-interaction --prefer-dist',
+            [$this->composer, 'install', '--no-scripts', '--no-interaction', '--prefer-dist'],
             'Failed to run composer install',
             3600
         );
@@ -82,7 +82,7 @@ class Composer
     public function createProject($folder)
     {
         $this->runProcess(
-            $this->composer . ' create-project october/october --no-scripts --no-interaction --no-install '.$folder,
+            [$this->composer, 'create-project', 'october/october','--no-scripts', '--no-interaction', '--no-install', $folder],
             'Failed to run composer create-project',
             3600
         );
@@ -99,7 +99,7 @@ class Composer
     public function updateLock()
     {
         $this->runProcess(
-            $this->composer . ' update --no-scripts --no-interaction --prefer-dist --lock',
+            [$this->composer, 'update', '--no-scripts', '--no-interaction', '--prefer-dist', '--lock'],
             'Failed to run composer update',
             3600
         );
@@ -124,7 +124,7 @@ class Composer
         $package = escapeshellarg($package);
 
         $this->runProcess(
-            $this->composer . ' require ' . $package . ' --no-interaction',
+            [$this->composer, 'require', $package, '--no-interaction'],
             'Failed to add composer dependency',
             3600
         );
@@ -144,7 +144,7 @@ class Composer
         $version = escapeshellarg($version);
 
         $this->runProcess(
-            $this->composer . ' require ' . $package . ' ' . $version . ' --no-interaction',
+            [$this->composer, 'require', $package, $version, '--no-interaction'],
             'Failed to add  specific composer dependency',
             3600
         );

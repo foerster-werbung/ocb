@@ -11,6 +11,8 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 trait ManageDirectory
 {
+    use RunsProcess;
+
     /**
      * Copy file from sourceFile to targetFile
      *
@@ -123,10 +125,10 @@ trait ManageDirectory
 
             // If there are write-protected files present (primarily on Windows) we can use
             // the force mode of rm to remove it. PHP itself won't delete write-protected files.
-            $command = stripos(PHP_OS, 'WIN') === 0 ? 'rm /f' : 'rm -f';
+            $command = stripos(PHP_OS, 'WIN') === 0 ? ['rm','/f'] : ['rm','-f'];
             $file    = escapeshellarg($file);
 
-            (new Process($command . ' ' . $file))->setTimeout(60)->run();
+            $this->runProcess(array_merge($command, $file), "Unlink failed", 60);
         }
     }
 

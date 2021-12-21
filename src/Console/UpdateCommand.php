@@ -161,7 +161,7 @@ class UpdateCommand extends Command
         $this->write('<info>Running composer update</info>');
         $this->composer->updateLock();
 
-        return true;
+        return 0;
     }
 
     /**

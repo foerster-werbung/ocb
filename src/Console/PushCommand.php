@@ -59,7 +59,7 @@ class PushCommand extends Command
 
         if (count($status->all()) === 0) {
             $this->write('Nothing to push');
-            return true;
+            return 0;
         }
 
         $repo->stage();
@@ -70,6 +70,6 @@ class PushCommand extends Command
 
         $this->write('Pushed');
 
-        return true;
+        return 0;
     }
 }

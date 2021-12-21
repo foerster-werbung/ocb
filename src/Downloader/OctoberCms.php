@@ -5,15 +5,17 @@ namespace FoersterWerbung\Bootstrapper\October\Downloader;
 
 use FoersterWerbung\Bootstrapper\October\Manager\BaseManager;
 use FoersterWerbung\Bootstrapper\October\Util\Composer;
+use FoersterWerbung\Bootstrapper\October\Util\RunsProcess;
 use GuzzleHttp\Client;
 use FoersterWerbung\Bootstrapper\October\Util\CliIO;
 use Symfony\Component\Process\Exception\LogicException;
 use Symfony\Component\Process\Exception\RuntimeException;
-use Symfony\Component\Process\Process;
 use ZipArchive;
 
 class OctoberCms extends BaseManager
 {
+    use RunsProcess;
+
     protected $files = [
         'bootstrap' => '',
         'config' => '',
@@ -24,6 +26,8 @@ class OctoberCms extends BaseManager
         'composer.json' => 'composer.json',
         'index.php' => 'index.php',
         'server.php' => 'server.php',
+        // required for set key
+        'modules/system' => 'modules/'
     ];
 
     protected $installerFile;
@@ -115,7 +119,10 @@ class OctoberCms extends BaseManager
     {
         if (is_dir($this->ocmsInstallDir)) {
             $this->write("-> Deleting ocms copy in '$this->ocmsInstallDir'");
-            (new Process(sprintf('rm -rf %s', $this->ocmsInstallDir)))->run();
+
+            $this->runProcess(['rm', '-rf', $this->ocmsInstallDir],
+                'Failed to delete copy command',
+                3600);
         }
 
         return $this;
@@ -123,14 +130,19 @@ class OctoberCms extends BaseManager
 
     public function clearProject() {
 
-        $modulesDir = $this->pwd() . DS . "modules";
+        $modulesDir = $this->pwd() . "modules";
         if (is_dir($modulesDir)) {
-            (new Process(sprintf('rm -rf %s', $modulesDir)))->run();
+            $this->runProcess(['rm', '-rf', $modulesDir],
+                'Failed to delete copy command',
+                3600);
         }
 
-        $vendorDir = $this->pwd() . DS . "vendor";
+        $vendorDir = $this->pwd() . "vendor";
         if (is_dir($vendorDir)) {
-            (new Process(sprintf('rm -rf %s', $vendorDir)))->run();
+            $this->runProcess(['rm', '-rf', $vendorDir],
+                'Failed to delete copy command',
+                3600);
+
         }
 
         return $this;
@@ -146,16 +158,24 @@ class OctoberCms extends BaseManager
 
     protected function copyProjectFiles()
     {
+        // Create modules/system dir
+        $systemDir = $this->pwd() . "/modules/system";
+        if (!is_dir($systemDir)) {
+            $this->runProcess(['mkdir', '-p', $systemDir],
+                'Creating modules/system failed',
+                3600);
+        }
+
         foreach ($this->files as  $src => $dst) {
             $src = $this->ocmsInstallDir . DS . $src;
             $dst = $this->pwd() . $dst;
-            $this->write("-> copying ".$src." -> ".$dst);
 
-            (new Process(sprintf('cp -rn %s %s', $src, $dst)))->run();
+            // $this->write("-> copying ".$src." -> ".$dst);
+            $this->runProcess(['cp', '-rn', $src, $dst],
+                'Failed to run copy command',
+                3600);
         }
-
         return $this;
-
     }
 
     /**

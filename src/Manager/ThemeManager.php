@@ -85,7 +85,7 @@ class ThemeManager extends BaseManager
         $themeDir = $this->createDir($themeDeclaration);
 
         if ( ! $this->isEmpty($themeDir)) {
-            $this->artisan->call('theme:use '.$themeDeclaration);
+            $this->artisan->themeUse($themeDeclaration);
             throw new ThemeExistsException("-> Theme is already installed. Activating.");
         }
 
@@ -96,7 +96,7 @@ class ThemeManager extends BaseManager
                 $themeTemplate = $this->getTemplate('theme');
                 $this->rcopy($themeTemplate, $themeDir);
                 $this->createThemeYamlFile($themeDir, $themeDeclaration);
-                $this->artisan->call('theme:use '.$themeDeclaration);
+                $this->artisan->themeUse($themeDeclaration);
                 return true;
             }
         }
@@ -104,7 +104,7 @@ class ThemeManager extends BaseManager
         $repo = Git::repo($themeDir);
         try {
             $repo->cloneFrom($remote, $themeDir);
-            $this->artisan->call('theme:use '.$themeDeclaration);
+            $this->artisan->themeUse($themeDeclaration);
         } catch (RuntimeException $e) {
             throw new RuntimeException('Error while cloning theme repo: ' . $e->getMessage());
         }
@@ -138,7 +138,7 @@ class ThemeManager extends BaseManager
         list($theme, $remote) = $this->parseDeclaration($themeDeclaration);
 
         try {
-            $this->artisan->call("theme:install {$theme}");
+            $this->artisan->themeInstall($themeDeclaration);
         } catch (RuntimeException $e) {
             throw new RuntimeException(sprintf('Error while installing theme "%s" via artisan.', $theme));
         }

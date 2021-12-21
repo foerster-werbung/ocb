@@ -30,7 +30,6 @@ else
       echo 'Initializing October CMS seeds...'
       ocb seed
       touch $ALREADY_SEEDED
-
     fi
 
     # Pushing crontab

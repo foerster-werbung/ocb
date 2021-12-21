@@ -93,7 +93,7 @@ class SeedCommand extends Command
 
         $this->write('-> Application seeded', 'comment');
 
-        return true;
+        return 0;
     }
 
     /**
@@ -206,7 +206,7 @@ class SeedCommand extends Command
         }
 
 
-        return true;
+        return 0;
     }
 
     function file_get_contents_utf8($fn) {
