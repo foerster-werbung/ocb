@@ -27,7 +27,7 @@ trait RunsProcess
         $process->enableOutput();
         $process->start();
 
-        $this->output->writeln("<comment>$command</comment>");
+        $this->output->writeln("<comment>".implode(" " , $command) ."</comment>");
         $process->wait(function ($type, $buffer) {
             $wrap = Process::ERR === $type ? 'error' : 'comment';
             $this->output->write("<$wrap>$buffer</$wrap>");
@@ -48,7 +48,7 @@ trait RunsProcess
     {
         if ($exitCode !== 0) {
             $this->output->writeln('<error>' . $message . ($output ? ': ' : '') .  '</error>');
-            $this->output->writln('-> '.$output);
+            $this->output->writeln('-> '.$output);
             return false;
         }
 

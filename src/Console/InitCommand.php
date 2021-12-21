@@ -66,6 +66,6 @@ class InitCommand extends Command
 
         $output->writeln('<comment>Done! Now edit your october.yaml and run october install.</comment>');
 
-        return true;
+        return 0;
     }
 }

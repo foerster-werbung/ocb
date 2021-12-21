@@ -156,8 +156,7 @@ class PluginManager extends BaseManager
         list($update, $vendor, $plugin, $remote, $branch) = $this->parseDeclaration($pluginDeclaration);
 
         try {
-            $cmd = "plugin:install {$vendor}.{$plugin}";
-            $this->artisan->call($cmd);
+            $this->artisan->pluginInstall($vendor, $plugin);
         } catch (RuntimeException $e) {
             throw new RuntimeException(
                 sprintf(

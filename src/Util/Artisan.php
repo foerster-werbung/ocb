@@ -31,14 +31,34 @@ class Artisan
         $this->php = $php;
     }
 
-    public function call(string $command)
+    public function octoberInstall() {
+        return $this->call('october:install', ['--no-interaction']);
+    }
+
+    public function octoberBuild() {
+        return $this->call('october:build', ['--no-interaction']);
+    }
+
+    public function themeUse($theme) {
+        return $this->call('theme:use', [$theme]);
+    }
+
+    public function themeInstall($theme) {
+        return $this->call('theme:install', [$theme]);
+    }
+
+    public function pluginInstall($vendor, $plugin) {
+        return $this->call('plugin:install', ["{$vendor}.{$plugin}"]);
+    }
+
+    public function call(string $command, array $params = [])
     {
-        $proc = new Process($this->php . " artisan " . $command);
+        $proc = new Process(array_merge([$this->php, "artisan", $command], $params));
         $proc->enableOutput();
         $proc->setTimeout(3600);
         $exitCode = $proc->start();
 
-        $this->write("php artisan $command");
+        $this->write("php artisan $command " . implode(' ', $params));
         $proc->wait(function ($type, $buffer) {
             $this->write("$buffer", Process::ERR === $type ? 'error' : 'info');
         });
@@ -48,5 +68,7 @@ class Artisan
                 sprintf("Error running \"{$this->php} artisan {$command}\" command: %s", $proc->getOutput())
             );
         }
+
+        return $exitCode;
     }
 }

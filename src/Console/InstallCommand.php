@@ -160,11 +160,10 @@ class InstallCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->makeConfig();
         $this->setOutput($output);
 
         $this->force = $input->getOption('force');
-
-        $this->makeConfig();
 
         if ( ! empty($php = $input->getOption('php'))) {
             $this->setPhp($php);
@@ -186,21 +185,19 @@ class InstallCommand extends Command
 
             $this->prepareDatabase();
 
-            $this->write('Build Octobercms...');
-            $this->artisan->call('october:build');
+            $this->write('Install Octobercms...');
+            $this->artisan->octoberBuild();
 
             $this->firstRun = true;
-        }
-
-        if ($status === 2) {
+        } elseif  ($status === 2) {
             $this->ocms->download();
 
             $this->write('Installing octobercms installer...');
             $this->composer->install();
+        } else {
+            $this->write('Installing octobercms...');
+            $this->composer->install();
         }
-
-        $this->write('Installing octobercms...');
-        $this->composer->install();
 
         $this->write('Migrating database...');
         $this->artisan->call('october:migrate');
@@ -267,7 +264,7 @@ class InstallCommand extends Command
 
         $this->write('Application ready! Build something amazing.', 'comment');
 
-        return true;
+        return 0;
     }
 
     /**
@@ -326,22 +323,16 @@ class InstallCommand extends Command
         $setup = new Setup($this->config, $this->output, $this->php, $this->artisan);
         $setup->config();
 
-        if ($this->firstRun) {
-            $setup->env(false, true);
+        if ($force || !file_exists($this->pwd() . '/.env' )) {
+            $setup->env();
+        }
+        if (!file_exists($this->pwd() . '/auth.json' )) {
             $this->licenseKey();
-            return ;
         }
-
-        if ($this->fileExists('.env') && $force === false) {
-            return $this->write('-> Configuration already set up. Use --force to regenerate.', 'comment');
-        }
-
-        $setup->env();
-        $this->licenseKey();
     }
 
     protected function licenseKey() {
-        $this->artisan->call('project:set ' . $this->config->october['licenseKey']);
+        $this->artisan->call('project:set', [$this->config->october['licenseKey']]);
     }
 
     /**
