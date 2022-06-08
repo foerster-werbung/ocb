@@ -5,12 +5,12 @@ FROM dwchiang/nginx-php-fpm:latest
 
 # --- docker-octobercms --- #
 RUN apt-get update && \
-  apt-get install -y cron git-core jq unzip vim zip curl dos2unix \
-  libjpeg-dev libpng-dev libpq-dev libsqlite3-dev libwebp-dev libzip-dev libyaml-dev && \
+  apt-get install -y cron git-core jq unzip vim zip curl dos2unix libxrender1 \
+  libjpeg-dev libpng-dev libpq-dev libsqlite3-dev libwebp-dev libzip-dev libyaml-dev libicu-dev && \
   rm -rf /var/lib/apt/lists/* && \
   docker-php-ext-configure zip --with-zip && \
   docker-php-ext-configure gd --with-jpeg --with-webp && \
-  docker-php-ext-install exif gd mysqli opcache pdo_pgsql pdo_mysql zip bcmath
+  docker-php-ext-install exif gd mysqli opcache pdo_pgsql pdo_mysql zip bcmath intl
 
 # RUN apt-get install -y libxrender1 libfontconfig1 libx11-dev libxtst6
 

@@ -258,6 +258,9 @@ class InstallCommand extends Command
             $this->cleanup();
         }
 
+        $this->write('Syncing project, installs all plugins and themes belonging to this project....');
+        $this->artisan->call('project:sync');
+
         $this->write('Clearing cache...');
         $this->artisan->call('clear-compiled');
         $this->artisan->call('cache:clear');
