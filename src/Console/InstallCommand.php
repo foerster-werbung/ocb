@@ -200,7 +200,10 @@ class InstallCommand extends Command
         }
 
         $this->write('Migrating database...');
+        $this->artisan->call('migrate');
         $this->artisan->call('october:migrate');
+
+        $this->artisan->themeUse($this->config['october']['theme']);
 
         if (isset($this->config['cms']['theme'])) {
             $themeDeclaration = $this->config['cms']['theme'];

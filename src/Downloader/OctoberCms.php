@@ -25,15 +25,17 @@ class OctoberCms extends BaseManager
         'artisan' => 'artisan',
         'composer.json' => 'composer.json',
         'index.php' => 'index.php',
-        'server.php' => 'server.php',
+        //'server.php' => 'server.php',
         // required for set key
         'modules/system' => 'modules/'
     ];
 
+    protected $optionalFiles = [
+        '.env'
+    ];
+
     protected $installerFile;
     protected $ocmsInstallDir = '/tmp/ocms';
-
-    protected $branch = "1.1.x-dev";
 
     /**
      * Downloads and extracts October CMS.
@@ -108,14 +110,29 @@ class OctoberCms extends BaseManager
             ->cleanupProject()
             ->createProject()
             ->copyProjectFiles()
+            ->cleanupFreshProject()
             //->setMaster()
             ->cleanupProject();
 
         return $this;
     }
 
+    public function cleanupFreshProject() {
+
+        // Remove php files from laravel
+        $storageFrameworkPath=  $this->pwd() . "/storage/framework";
+        if (is_dir($storageFrameworkPath)) {
+            $laravelPhpFiles = $storageFrameworkPath . "/*.php";
+            $this->runProcess(['rm', $laravelPhpFiles],
+                "Failed to remove Laravel's PHP files",
+                3600);
+        }
+        return $this;
+    }
+
     public function cleanupProject()
     {
+
         if (is_dir($this->ocmsInstallDir)) {
             $this->write("-> Deleting ocms copy in '$this->ocmsInstallDir'");
 
@@ -174,36 +191,17 @@ class OctoberCms extends BaseManager
                 'Failed to run copy command',
                 3600);
         }
+
+        foreach ($this->optionalFiles as $src) {
+            $src = $this->ocmsInstallDir . DS . $src;
+            $dst = $this->pwd();
+
+            $this->runProcess(['cp', '-rn', $src, $dst],
+                'Failed to run copy command',
+                3600);
+        }
         return $this;
     }
 
-    /**
-     * Since we don't want any unstable updates we fix
-     * the libraries to the master branch.
-     *
-     * @return $this
-     */
-    protected function setMaster()
-    {
-        $json = getcwd() . DS . 'composer.json';
-
-        $this->write("-> Changing October CMS dependencies to dev-master");
-
-        $contents = file_get_contents($json);
-
-        $contents = preg_replace_callback(
-            '/october\/(?:rain|system|backend|cms)":\s"([^"]+)"/m',
-            function ($treffer) {
-                $replacedDependency = str_replace($treffer[1], $this->branch, $treffer[0]);
-                $this->write("--> $replacedDependency");
-                return $replacedDependency;
-            },
-            $contents
-        );
-
-        file_put_contents($json, $contents);
-
-        return $this;
-    }
 
 }

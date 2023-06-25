@@ -4,6 +4,7 @@ set -e
 
 ALREADY_INSTALLED="/root/ALREADY_INSTALLED"
 ALREADY_SEEDED="/root/ALREADY_SEEDED"
+ALREADY_CRONED="/root/ALREADY_CRONED"
 
 if [ ! -f "october.yaml" ] && [ ! "${OCB_CHECK,,}" == "false" ]; then
 
@@ -33,11 +34,12 @@ else
     fi
 
     # Pushing crontab
-    if [ "${OCB_CRON,,}" == "true" ]; then
+    if [ "${OCB_CRON,,}" == "true" ]&& [ ! -e $ALREADY_CRONED ]; then
         echo 'Adding crontab "* * * * * /usr/local/bin/php /var/www/html/artisan schedule:run"'
-        echo "* * * * * /usr/local/bin/php /var/www/html/artisan schedule:run > /proc/1/fd/1 2>/proc/1/fd/2" | tee -a /var/spool/cron/root
+        (crontab -l; echo "* * * * * /usr/local/bin/php /var/www/html/artisan schedule:run > /proc/1/fd/1 2>/proc/1/fd/2") | sort -u | crontab -
         echo 'Starting cron service'
         service cron start
+        touch $ALREADY_CRONED
     fi
 
     docker-oc-entrypoint $@

@@ -1,4 +1,4 @@
-FROM dwchiang/nginx-php-fpm:latest
+FROM dwchiang/nginx-php-fpm:8.2.5-fpm-bullseye-nginx-1.24.0
 
 # --- clear nginx static files --- #
 
@@ -33,7 +33,7 @@ RUN { \
   } > /usr/local/etc/php/conf.d/docker-oc-php.ini
 
 # yaml
-RUN pecl install yaml-2.2.1 && echo "extension=yaml.so" > /usr/local/etc/php/conf.d/ext-yaml.ini
+RUN pecl install yaml-2.2.3 && echo "extension=yaml.so" > /usr/local/etc/php/conf.d/ext-yaml.ini
 
 # xdebug
 RUN pecl install xdebug

@@ -80,7 +80,7 @@ class Setup
         $newEnv = $this->writer->backupExistingEnv();
 
         // Remove to be able to run october:env
-        $this->writer->removeCurrentEnv();
+        // $this->writer->removeCurrentEnv();
 
 
         // $this->runProcess($this->php . ' artisan october:env', 'Failed to create env config!');
