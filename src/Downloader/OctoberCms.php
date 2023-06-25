@@ -17,6 +17,7 @@ class OctoberCms extends BaseManager
     use RunsProcess;
 
     protected $files = [
+        'app' => '',
         'bootstrap' => '',
         'config' => '',
         'plugins' => '',
@@ -31,7 +32,19 @@ class OctoberCms extends BaseManager
     ];
 
     protected $optionalFiles = [
-        '.env'
+        '.babelrc',
+        '.editorconfig',
+        '.gitattributes',
+        '.env',
+        '.env.example',
+        '.gitignore',
+        '.htaccess',
+        '.jshintrc',
+        'phpcs.xml',
+        'phpunit.xml',
+        'webpack.config.js',
+        'webpack.helpers.js',
+        'webpack.mix.js',
     ];
 
     protected $installerFile;
@@ -194,6 +207,9 @@ class OctoberCms extends BaseManager
 
         foreach ($this->optionalFiles as $src) {
             $src = $this->ocmsInstallDir . DS . $src;
+            if (file_exists($src))
+                continue;
+
             $dst = $this->pwd();
 
             $this->runProcess(['cp', '-rn', $src, $dst],
