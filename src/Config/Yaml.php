@@ -40,23 +40,23 @@ class Yaml implements Config, \ArrayAccess
         return isset($this->config[$name]) ? $this->config[$name] : null;
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->config[$offset]);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->config[$offset];
 
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         // TODO: Implement offsetSet() method.
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         // TODO: Implement offsetUnset() method.
     }

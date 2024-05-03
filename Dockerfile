@@ -1,4 +1,4 @@
-FROM dwchiang/nginx-php-fpm:8.2.5-fpm-bullseye-nginx-1.24.0
+FROM dwchiang/nginx-php-fpm:8.2.18-fpm-bullseye-nginx-1.24.0
 
 # --- clear nginx static files --- #
 

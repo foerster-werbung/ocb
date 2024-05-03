@@ -229,7 +229,7 @@ class InstallCommand extends Command
 
         if (isset($this->config['git']['plugins'])) {
             $deployment = $this->config['git']['plugins'];
-            $this->write("Setting up ${deployment} deployment.");
+            $this->write("Setting up {$deployment} deployment.");
             try {
                 $deploymentObj = DeploymentFactory::createDeployment($deployment);
                 $deploymentObj->install($this->force);
@@ -290,13 +290,13 @@ class InstallCommand extends Command
 
             if ($pluginInstalled && ($update || ! $this->gitignore->hasPluginHeader($vendor, $plugin))) {
                 if ($pluginInstalled && $remote) {
-                    $this->write("-> Removing ${vendor}.${plugin} directory to re-download the newest version...",
+                    $this->write("-> Removing {$vendor}.{$plugin} directory to re-download the newest version...",
                         'comment');
 
                     $this->pluginManager->removeDir($pluginDeclaration);
                     $installPlugin = true;
                 } else {
-                    $this->write("-> Skipping re-download of ${vendor}.${plugin}", 'comment');
+                    $this->write("-> Skipping re-download of {$vendor}.{$plugin}", 'comment');
                     $installPlugin = false;
                 }
             }

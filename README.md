@@ -39,10 +39,11 @@ If you are looking for a wintercms Docker container, use [foersterwerbung/wcb](h
 * Includes composer 2.0
 
 ## Versions
-| OCB Version | Docker Tag      | Supported Octobercms versions | Composer version | PHP Version | Webserver | Module   | Depending on |
-| ----------- | --------------- | ----------------------------- | ---------------- | ----------- | --------- | -------- | ------------ |
-| 1.x         | version-1.x     | 1.0, 1.1                      | 1.x              | 7.4         | Apache    | mod_php  | [aspendigital/docker-octobercms](https://github.com/aspendigital/docker-octobercms) |
-| 2.x         | 2.x-8.0, latest |  2.0                          | 2.x              | 8.0         | Nginx     | php-fpm  | [dwchiang/nginx-php-fpm](https://github.com/dwchiang/nginx-php-fpm/tree/master/alpine3.12) |
+| OCB Version | Docker Tag    | Supported Octobercms versions | Composer version | PHP Version | Webserver | Module   | Depending on |
+|-------------|---------------|-------------------------------| ---------------- |-------------| --------- | -------- | ------------ |
+| 1.x         | version-1.x   | 1.0, 1.1                      | 1.x              | 7.4         | Apache    | mod_php  | [aspendigital/docker-octobercms](https://github.com/aspendigital/docker-octobercms) |
+| 2.x         | 2.x-8.0 | 2.0                           | 2.x              | 8.0         | Nginx     | php-fpm  | [dwchiang/nginx-php-fpm](https://github.com/dwchiang/nginx-php-fpm/tree/master/alpine3.12) |
+| 3.x         | 3.x-8.2, latest | 3.0                           | 2.x              | 8.2         | Nginx     | php-fpm  | [dwchiang/nginx-php-fpm](https://github.com/dwchiang/nginx-php-fpm/tree/master/alpine3.12) |
 
 
 ## Docker image

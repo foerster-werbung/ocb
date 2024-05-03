@@ -167,6 +167,6 @@ class PluginManager extends BaseManager
             );
         }
 
-        return "${vendor}.${plugin} plugin installed";
+        return "{$vendor}.{$plugin} plugin installed";
     }
 }

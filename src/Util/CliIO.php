@@ -63,6 +63,6 @@ trait CliIO
      */
     protected function write($line, $surround = "info")
     {
-        $this->output->writeln("<${surround}>${line}</${surround}>");
+        $this->output->writeln("<{$surround}>{$line}</{$surround}>");
     }
 }

@@ -130,7 +130,7 @@ class SeedCommand extends Command
     public function seedMysql()
     {
         $DB_HOST = str_replace("localhost", "127.0.0.1", $this->config->database['host']);
-        $DB_PORT = $this->config->database['port'];
+        $DB_PORT = $this->config->database['port'] ?? 3306;
         $DB_DATABASE = $this->config->database['database'];
         $DB_USERNAME = $this->config->database['username'];
         $DB_PASSWORD = $this->config->database['password'];
@@ -162,19 +162,17 @@ class SeedCommand extends Command
         if(!is_dir($seedOrigin)) {
             $this->write("-> $seedOrigin is neither a file nor a directory, skipping seeding", "error");
             return $this->afterSeeding($db);
-        };
+        }
 
-        if ($handle = opendir($seedOrigin)) {
+        if ($files = scandir($seedOrigin)) {
 
-            while (false !== ($entry = readdir($handle))) {
+            foreach ($files as $entry) {
                 if (!$this->isSqlFile($entry)) {
                     continue;
                 }
 
                 $this->seedMysqlFile($db, $seedOrigin . DS . $entry);
             }
-
-            closedir($handle);
         } else {
             $this->write("-> Unable to read seeding directory");
         }

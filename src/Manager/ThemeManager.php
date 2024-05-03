@@ -143,6 +143,6 @@ class ThemeManager extends BaseManager
             throw new RuntimeException(sprintf('Error while installing theme "%s" via artisan.', $theme));
         }
 
-        return "${theme} theme installed";
+        return "{$theme} theme installed";
     }
 }
