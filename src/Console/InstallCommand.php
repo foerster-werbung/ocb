@@ -203,8 +203,6 @@ class InstallCommand extends Command
         $this->artisan->call('migrate');
         $this->artisan->call('october:migrate');
 
-        $this->artisan->themeUse($this->config['october']['theme']);
-
         if (isset($this->config['cms']['theme'])) {
             $themeDeclaration = $this->config['cms']['theme'];
             $this->write('Installing Theme...');
@@ -218,6 +216,10 @@ class InstallCommand extends Command
         }  {
             $this->write('No theme to install', 'comment');
         }
+
+        if (isset($this->config['october']['theme']))
+            $this->artisan->themeUse($this->config['october']['theme']);
+
 
         if (isset($this->config['plugins'])) {
             $pluginsDeclarations = $this->config['plugins'];
@@ -329,12 +331,11 @@ class InstallCommand extends Command
         $setup = new Setup($this->config, $this->output, $this->php, $this->artisan);
         $setup->config();
 
-        if ($force || !file_exists($this->pwd() . '/.env' )) {
+        if ($force || !file_exists($this->pwd() . '.env' )) {
             $setup->env();
         }
-        if (!file_exists($this->pwd() . '/auth.json' )) {
-            $this->licenseKey();
-        }
+
+        $this->licenseKey();
     }
 
     protected function licenseKey() {

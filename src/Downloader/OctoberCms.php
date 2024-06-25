@@ -133,7 +133,7 @@ class OctoberCms extends BaseManager
     public function cleanupFreshProject() {
 
         // Remove php files from laravel
-        $storageFrameworkPath=  $this->pwd() . "/storage/framework";
+        $storageFrameworkPath=  $this->pwd() . "storage/framework";
         if (is_dir($storageFrameworkPath)) {
             $laravelPhpFiles = $storageFrameworkPath . "/*.php";
             $this->runProcess(['rm', $laravelPhpFiles],
